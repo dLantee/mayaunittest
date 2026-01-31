@@ -1,7 +1,7 @@
 # Maya Unit Testing Framework
 
-🛠️ Developed for: **Autodesk Maya 2026**  
-🐍 Python version: **3.11**
+🛠️ Developed for: **Autodesk Maya 2022+**  
+🐍 Python version: **3.7**
 
 Contains functions and classes to aid in the unit testing process within Maya.
 
@@ -9,28 +9,35 @@ Source: https://www.chadvernon.com/blog/unit-testing-in-maya/
 
 ### Requirements
 
-- Tests must be written using the unittest module.
-- Tests must be located in a "tests" directory within a Maya module.
-- Test methods must be named with a "test_" prefix.
-- Test case classes must be named with a "Test" suffix.
-- MAYA_LOCATION environment variable must be set to the Maya installation path.
+  - Tests must be written using the `mayaunittest` module.
+  - Tests must be located in a **"/tests"** directory within a module/package.
+  - Test methods must be named with a **"test_"** prefix.
+  - Test case classes must be named with a **"Tests"** suffix.
+  - **MAYA_LOCATION** environment variable must be set to the Maya installation path.
 
 ### The main classes
-- **TestCase** :
-  A derived class of unittest.TestCase which add convenience functionality
+- **MayaTestCase** :
+  A derived class of `unittest.TestCase` which add convenience functionality
   such as auto plug-in loading/unloading, and auto temporary file name generation
   and cleanup.
-- **TestResult**:
-  A derived class of unittest.TextTestResult which customizes
+- **MayaTestResult**:
+  A derived class of `unittest.TextTestResult` which customizes
   the test result so we can do things like do a file new between
   each test and suppress script editor output.
 
-### To write tests for this system you need to
-    a) Derive from TestCase
-    b) Write one or more tests that use the unittest module's assert methods to validate the results.
+### Example commandline usage
 
-### Example usage
+- --maya : Specify the Maya version to use (e.g., 2022, 2023, 2024, 2025, 2026).
+- --packages : Space-separated list of paths to Maya modules/packages containing tests.
+- --pause : Pause the Maya session after tests complete for inspection.
+- --maya-app-dir : Specify a custom Maya application directory. (Generates a temporary clean one if not provided or doesn't exist.)
 
+```commandline
+py "path\to\run_maya_tests.py" --maya 2022 --packages D:\projects\pkgA D:\projects\pkgB --pause
+py "path\to\run_maya_tests.py" --maya 2026 --packages D:\projects\pkgA --maya-app-dir F:\Extensions\maya\2022
+```
+
+### Example test case
 ```python
 from maya import cmds
 from mayaunittest import MayaTestCase
@@ -53,19 +60,20 @@ import mayaunittest
 mayaunittest.run_tests(test='test_sample.SampleTests.test_create_sphere')
 ```
 
-### To run all tests
+### To run all tests in Maya Modules
 ```python
 mayaunittest.run_tests()
 ```
 
 ### Settings
 
-You can customize the behavior of the test framework by setting the following environment variables:
-- **MAYA_TEST_TEMP_DIR**: Specifies the directory where temporary files created during tests will be stored. If not set, a default temporary directory will be used.
-- **MAYA_TEST_CLEANUP**: If set to "1", temporary files created
-- during tests will be deleted after the tests complete. If not set or set to "0", temporary files will be retained for inspection.
-
-Set Settings.
-
-
-### License
+```Python
+import mayaunittest
+mayaunittest.Settings.cleanup_temp_files = True
+# Specifies where files generated during tests should be stored
+mayaunittest.Settings.mayaunittest.Settings.temp_dir = ""
+# Controls whether temp files should be deleted after running all tests in the test case
+mayaunittest.Settings.delete_files = True
+# Specifies whether the standard output and standard error streams are buffered during the test run.
+mayaunittest.Settings.buffer_output = True
+```

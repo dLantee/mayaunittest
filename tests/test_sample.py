@@ -1,8 +1,7 @@
-import mayaunittest
+from maya import cmds
+from mayaunittest import MayaTestCase
 
-class SampleTestCase(mayaunittest.MayaTestCase):
-    def test_addition(self):
-        self.assertEqual(2 + 2, 4)
-
-    def test_subtraction(self):
-        self.assertEqual(5 - 3, 2)
+class SampleTests(MayaTestCase):
+    def test_create_sphere(self):
+        sphere = cmds.polySphere(n='mySphere')[0]
+        self.assertEqual('mySphere', sphere)

@@ -31,11 +31,21 @@ Source: https://www.chadvernon.com/blog/unit-testing-in-maya/
 - --packages : Space-separated list of paths to Maya modules/packages containing tests.
 - --pause : Pause the Maya session after tests complete for inspection.
 - --clean-maya-app-dir : Generates a temporary clean maya app dir.
+- --maya-path: Specify a custom Maya installation path.
+- --maya-config: Specify a custom Maya installation look up map.
 
 ```commandline
-py "path\to\run_maya_tests.py" --maya 2022 --packages D:\projects\pkgA D:\projects\pkgB --pause
+py "path\to\run_maya_tests.py" --packages D:\projects\pkgA D:\projects\pkgB --pause
 py "path\to\run_maya_tests.py" --maya 2026 --packages D:\projects\pkgA --clean-maya-app-dir
+py "path\to\run_maya_tests.py" --maya-path "C:\Program Files\Autodesk\Maya2024" --packages D:\projects\pkgA
+py "path\to\run_maya_tests.py" --maya-installs "path\to\custom_maya_installs.json" --packages D:\projects\pkgA
 ```
+
+### Priority of Maya executable resolution
+1. --maya-path argument
+2. --maya-installs argument
+3. MAYA_LOCATION environment variable
+4. Default installation paths based on --maya argument
 
 ### Example test case
 ```python

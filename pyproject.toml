@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mayaunittest"
+version = "0.0.1"
+description = "Unit test utilities for Autodesk Maya"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "dLantee" }]
+requires-python = ">=3.11"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "black>=24.0", "mypy>=1.0"]
+
+[project.urls]
+Homepage = "https://github.com/dLantee/mayaunittest"
+Changelog = "CHANGELOG.md"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-q"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = 3.11
+ignore_missing_imports = true

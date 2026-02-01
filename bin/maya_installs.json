@@ -1,0 +1,17 @@
+{
+  "windows": {
+    "2022": "C:/Program Files/Autodesk/Maya2022",
+    "2024": "C:/Program Files/Autodesk/Maya2024",
+    "2026": "C:/Program Files/Autodesk/Maya2026"
+  },
+  "linux": {
+    "2022": "/usr/autodesk/maya2022",
+    "2024": "/usr/autodesk/maya2024",
+    "2026": "/usr/autodesk/maya2026"
+  },
+  "darwin": {
+    "2022": "/Applications/Autodesk/maya2022/Maya.app/Contents",
+    "2024": "/Applications/Autodesk/maya2024/Maya.app/Contents",
+    "2026": "/Applications/Autodesk/maya2026/Maya.app/Contents"
+  }
+}

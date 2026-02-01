@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-02-01
+
 ### Added
 - maya_installs.json example file for custom Maya installation look up map. ([2])
 - Commandline option `--maya-path` to specify a custom Maya installation path. ([2])

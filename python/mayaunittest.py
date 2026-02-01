@@ -16,8 +16,6 @@ import tempfile
 import unittest
 import uuid
 
-from dataclasses import dataclass
-
 
 def mayapython():
     """
@@ -163,7 +161,6 @@ def run_tests_from_commandline(directories=None, test=None, test_suite=None):
             pass
 
 
-@dataclass
 class Settings:
     temp_dir = os.path.join(tempfile.gettempdir(), "mayaunittest", str(uuid.uuid4()))
     delete_files = True

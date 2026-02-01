@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- maya_installs.json example file for custom Maya installation look up map. ([2])
+- Commandline option `--maya-path` to specify a custom Maya installation path. ([2])
+- Commandline option `--maya-installs` to specify a custom Maya installation look up map. ([2])
+
+### Changed
+- README with new commandline options and examples.
+- Changed priority of Maya executable resolution to:
+
+
 ## [0.0.1] - 2026-01-31
 
 ### Added
@@ -24,4 +34,6 @@ All notable changes to this project will be documented in this file.
 
 [0.0.1]: 
 
+
+[2]: https://github.com/dLantee/mayaunittest/issues/2
 [4]: https://github.com/dLantee/mayaunittest/issues/4

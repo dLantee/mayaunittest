@@ -244,12 +244,11 @@ def build_arg_parser():
     )
 
     p.add_argument(
-        "--maya-app-dir",
-        default=None,
-        help=(
-            "Path to a clean MAYA_APP_DIR folder. "
-            "If omitted, generates temp_dir_folder/clean_maya_app_dir"
-        ),
+        "--clean-maya-app-dir",
+        action="store_true",
+        default=False,
+        help=("Generates a clean MAYA_APP_DIR for each run by default. \
+        Use this flag to disable clean env."),
     )
 
     p.add_argument("--pause", action="store_true", help="Pause at the end (useful when double-clicking).")
@@ -273,20 +272,8 @@ def main():
     if (not is_running_in_mayapy()) and (not args._in_mayapy):
         return spawn_mayapy_and_rerun(args.maya)
 
-    # Now we are inside mayapy
-    # maya_app_dir = None
-    # if args.maya_app_dir:
-    #     if os.path.exists(args.maya_app_dir):
-    #         maya_app_dir = args.maya_app_dir
-    #     else:
-    #         raise RuntimeError("Specified MAYA_APP_DIR does not exist: {0}".format(args.maya_app_dir))
-    # else:
-    
-    # Retrieve a maya_app_dir (temp or specified)
-    #   - If specified and exists, use it.
-    #   - If specified but does not exist, create a temp one in the same parent folder.
-    #   - If not specified, create a temp one.
-    maya_app_dir = get_clean_maya_app_dir(args.maya_app_dir)
+    # We are in mayapy here
+    maya_app_dir = get_clean_maya_app_dir() if args.clean_maya_app_dir else None
 
     try:
         names = ", ".join([p["name"] for p in packages])
@@ -303,8 +290,9 @@ def main():
 
         return 0
     finally:
-        if maya_app_dir is not None and os.path.exists(maya_app_dir):
-            _rmtree_with_retries(maya_app_dir)
+        if args.clean_maya_app_dir:
+            if maya_app_dir is not None and os.path.exists(maya_app_dir):
+                _rmtree_with_retries(maya_app_dir)
         if args.pause:
             input("Press [Enter] to continue...")
 

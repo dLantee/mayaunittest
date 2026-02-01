@@ -30,11 +30,11 @@ Source: https://www.chadvernon.com/blog/unit-testing-in-maya/
 - --maya : Specify the Maya version to use (e.g., 2022, 2023, 2024, 2025, 2026).
 - --packages : Space-separated list of paths to Maya modules/packages containing tests.
 - --pause : Pause the Maya session after tests complete for inspection.
-- --maya-app-dir : Specify a custom Maya application directory. (Generates a temporary clean one if not provided or doesn't exist.)
+- --clean-maya-app-dir : Generates a temporary clean maya app dir.
 
 ```commandline
 py "path\to\run_maya_tests.py" --maya 2022 --packages D:\projects\pkgA D:\projects\pkgB --pause
-py "path\to\run_maya_tests.py" --maya 2026 --packages D:\projects\pkgA --maya-app-dir F:\Extensions\maya\2022
+py "path\to\run_maya_tests.py" --maya 2026 --packages D:\projects\pkgA --clean-maya-app-dir
 ```
 
 ### Example test case
@@ -63,17 +63,4 @@ mayaunittest.run_tests(test='test_sample.SampleTests.test_create_sphere')
 ### To run all tests in Maya Modules
 ```python
 mayaunittest.run_tests()
-```
-
-### Settings
-
-```Python
-import mayaunittest
-mayaunittest.Settings.cleanup_temp_files = True
-# Specifies where files generated during tests should be stored
-mayaunittest.Settings.mayaunittest.Settings.temp_dir = ""
-# Controls whether temp files should be deleted after running all tests in the test case
-mayaunittest.Settings.delete_files = True
-# Specifies whether the standard output and standard error streams are buffered during the test run.
-mayaunittest.Settings.buffer_output = True
 ```

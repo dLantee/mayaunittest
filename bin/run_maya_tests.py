@@ -256,7 +256,8 @@ def configure_env_for_packages(packages, maya_app_dir):
 
 def spawn_mayapy_and_rerun(mayapy_exe):
     if not os.path.exists(mayapy_exe):
-        raise RuntimeError("Cannot find mayapy at: {0}".format(mayapy_exe))
+        err = "Cannot find mayapy at: {0}.\nSet --maya-path or --maya or MAYA_LOCATION env!"
+        raise RuntimeError(err.format(mayapy_exe))
 
     script_path = os.path.abspath(__file__)
 

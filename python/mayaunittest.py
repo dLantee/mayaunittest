@@ -194,10 +194,7 @@ def add_to_path(path):
     return False
 
 
-_BaseMayaTestCase = getattr(unittest, "MayaTestCase", unittest.TestCase)
-
-
-class MayaTestCase(_BaseMayaTestCase):
+class MayaTestCase(unittest.TestCase):
     files_created = []
     plugins_loaded = set()
 

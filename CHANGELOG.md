@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-02-05
+
+### Changed
+- Set default value if `--maya` flag not set.
+- Improved error handling and messages when Maya executable cannot be found.
+- Updated `README` with `Howto` and clarifications.
+
+
 ## [0.1.0] - 2026-02-01
 
 ### Added
@@ -33,9 +41,7 @@ All notable changes to this project will be documented in this file.
 ### Removed
 - Removed Settings from README as it requires further development.
 
-
-[0.0.1]: 
-
+ 
 
 [2]: https://github.com/dLantee/mayaunittest/issues/2
 [4]: https://github.com/dLantee/mayaunittest/issues/4

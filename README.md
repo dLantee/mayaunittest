@@ -4,8 +4,18 @@
 🐍 Python version: **3.7**
 
 Contains functions and classes to aid in the unit testing process within Maya.
+It starts a standalone Maya session, discovers and runs unit tests, and reports results
+in a readable format.
 
 Source: https://www.chadvernon.com/blog/unit-testing-in-maya/
+
+### Howto
+1. Put mayaunittest module somewhere in your PYTHONPATH. (with command line not needed)
+2. Create a **"/tests"** directory in your Maya module/package.
+3. Write test cases by deriving from `mayaunittest.MayaTestCase`.
+4. Use `bin/run_maya_tests.py` to run tests from command line or
+   use `mayaunittest.run_tests()` to run tests from within Maya.
+
 
 ### Requirements
 
@@ -27,18 +37,27 @@ Source: https://www.chadvernon.com/blog/unit-testing-in-maya/
 
 ### Example commandline usage
 
+Running test from command line makes development more convinient since you don't have to
+constantly restart Maya manually. When you run `run_maya_tests.py` it spwans
+a standalone Maya session in the background, runs the tests, and then closes Maya when done.
+
+Flags:
 - --maya : Specify the Maya version to use (e.g., 2022, 2023, 2024, 2025, 2026).
 - --packages : Space-separated list of paths to Maya modules/packages containing tests.
 - --pause : Pause the Maya session after tests complete for inspection.
 - --clean-maya-app-dir : Generates a temporary clean maya app dir.
 - --maya-path: Specify a custom Maya installation path.
 - --maya-config: Specify a custom Maya installation look up map.
+- --maya-installs: Specify a JSON file containing Maya installation paths. (Good for custom setups)
+
+Examples:
 
 ```commandline
-py "path\to\run_maya_tests.py" --packages D:\projects\pkgA D:\projects\pkgB --pause
-py "path\to\run_maya_tests.py" --maya 2026 --packages D:\projects\pkgA --clean-maya-app-dir
-py "path\to\run_maya_tests.py" --maya-path "C:\Program Files\Autodesk\Maya2024" --packages D:\projects\pkgA
-py "path\to\run_maya_tests.py" --maya-installs "path\to\custom_maya_installs.json" --packages D:\projects\pkgA
+cd path\to\mayaunittest
+py "bin\run_maya_tests.py" --maya 2026 --packages D:\projects\pkgA D:\projects\pkgB --pause
+py "bin\run_maya_tests.py" --packages D:\projects\pkgA --clean-maya-app-dir
+py "bin\run_maya_tests.py" --maya-path "C:\Program Files\Autodesk\Maya2024" --packages D:\projects\pkgA
+py "bin\run_maya_tests.py" --maya-installs "path\to\custom_maya_installs.json" --packages D:\projects\pkgA
 ```
 
 ### Priority of Maya executable resolution
@@ -56,21 +75,22 @@ class SampleTests(MayaTestCase):
     def test_create_sphere(self):
         sphere = cmds.polySphere(n='mySphere')[0]
         self.assertEqual('mySphere', sphere)
+        self.assertIsInstance(sphere, str)
 ```
 
-### To run just this test case in Maya
+> **_NOTE:_**
+More self.assert* function references can be found in the official unittest documentation:
+https://docs.python.org/3/library/unittest.html#classes-and-functions
+
+### To run test case in Maya
 ```python
 import mayaunittest
 mayaunittest.run_tests(test='test_sample.SampleTests')
-```
 
-### To run an individual test in a test case
-```python
-import mayaunittest
+# To run an individual test in a test case
 mayaunittest.run_tests(test='test_sample.SampleTests.test_create_sphere')
-```
 
-### To run all tests in Maya Modules
-```python
+# To run all tests in Maya Modules
+# MAYA_MODULE_PATH must be set to include the modules
 mayaunittest.run_tests()
 ```

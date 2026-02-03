@@ -5,35 +5,26 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mayaunittest"
 version = "0.1.0"
-description = "Unit test utilities for Autodesk Maya"
+description = "Unittest utilities for Autodesk Maya"
 readme = "README.md"
 license = { file = "LICENSE" }
-authors = [{ name = "dLantee" }]
-requires-python = ">=3.11"
-classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
+authors = [{ name = "David Lantos" }]
+
+# IMPORTANT:
+# Maya 2022 = Python 3.7
+# Maya 2023 = Python 3.9
+# Maya 2024+ = Python 3.10+
+requires-python = ">=3.7"
+
+dependencies = [
+    # Keep this EMPTY unless absolutely required
+    # Example:
+    # "numpy>=1.21"
 ]
-dependencies = []
 
-[project.optional-dependencies]
-dev = ["pytest>=7.0", "black>=24.0", "mypy>=1.0"]
+[tool.setuptools]
+# This assumes your importable code lives in: myModule/python/my_maya_module
+package-dir = { "" = "python" }
 
-[project.urls]
-Homepage = "https://github.com/dLantee/mayaunittest"
-Changelog = "CHANGELOG.md"
-
-[tool.pytest.ini_options]
-minversion = "7.0"
-addopts = "-q"
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-
-[tool.black]
-line-length = 88
-target-version = ["py311"]
-
-[tool.mypy]
-python_version = 3.11
-ignore_missing_imports = true
+[tool.setuptools.packages.find]
+where = ["python"]

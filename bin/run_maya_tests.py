@@ -279,7 +279,7 @@ def spawn_mayapy_and_rerun(mayapy_exe):
 def build_arg_parser():
     p = argparse.ArgumentParser(description="Run Maya unit tests for one or more packages.")
     p.add_argument("--maya", type=int,
-                   default=None, help="Maya version: 2022, 2024, 2026")
+                   default=DEFAULT_MAYA_VERSION, help="Maya version: 2022, 2024, 2026")
 
     p.add_argument(
         "--maya-path",

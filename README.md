@@ -1,11 +1,12 @@
+![A local image example](./images/unittest_for_maya_wallpaper.png)
 # Maya Unit Testing Framework
 
 🛠️ Developed for: **Autodesk Maya 2022+**  
-🐍 Python version: **3.7**
+🐍 Python version: **3.7+**
 
 Contains functions and classes to aid in the unit testing process within Maya.
 It starts a standalone Maya session, discovers and runs unit tests, and reports results
-in a readable format.
+in a readable format. It opens a new scene between each test to ensure test isolation.
 
 Source: https://www.chadvernon.com/blog/unit-testing-in-maya/
 
@@ -50,8 +51,6 @@ Flags:
 - --maya-config: Specify a custom Maya installation look up map.
 - --maya-installs: Specify a JSON file containing Maya installation paths. (Good for custom setups)
 
-Examples:
-
 ```commandline
 cd path\to\mayaunittest
 py "bin\run_maya_tests.py" --maya 2026 --packages D:\projects\pkgA D:\projects\pkgB --pause
@@ -93,4 +92,50 @@ mayaunittest.run_tests(test='test_sample.SampleTests.test_create_sphere')
 # To run all tests in Maya Modules
 # MAYA_MODULE_PATH must be set to include the modules
 mayaunittest.run_tests()
+```
+
+### Math module example
+
+```python
+# mypackage/python/mymodule.py
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+```
+
+
+```python
+# mypackage/tests/test_mymodule.py
+from maya import cmds
+from mayaunittest import MayaTestCase
+import mymodule
+
+class MyModuleTests(MayaTestCase):
+    def test_add(self):
+        result = mymodule.add(3, 5)
+        self.assertEqual(result, 8)
+
+    def test_subtract(self):
+        result = mymodule.subtract(10, 4)
+        self.assertEqual(result, 6)
+```
+
+### Advanced example
+```python
+from maya import cmds
+from mayaunittest import MayaTestCase
+
+class AdvSampleTests(MayaTestCase):
+    def test_create_attribute(self):
+        sphere = cmds.polySphere(n='mySphere')[0]
+        cmds.addAttr(sphere, longName='myCustomAttr', attributeType='float', defaultValue=1.0)
+        cmds.xform(sphere, translation=(0, 5, 0))
+        
+        self.assertEqual('mySphere', sphere)
+        self.assertIsInstance(sphere, str)
+        self.assertTrue(cmds.attributeQuery('myCustomAttr', node=sphere, exists=True))
+        self.assertEqual(cmds.getAttr(f'{sphere}.myCustomAttr'), 1.0)
+        self.assertListEqual(cmds.xform(sphere, query=True, translation=True), [0.0, 5.0, 0.0])
 ```

@@ -4,26 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mayaunittest"
-version = "0.1.0"
+version = "0.1.3"
 description = "Unittest utilities for Autodesk Maya"
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [{ name = "David Lantos" }]
 
-# IMPORTANT:
-# Maya 2022 = Python 3.7
-# Maya 2023 = Python 3.9
-# Maya 2024+ = Python 3.10+
 requires-python = ">=3.7"
 
-dependencies = [
-    # Keep this EMPTY unless absolutely required
-    # Example:
-    # "numpy>=1.21"
-]
+dependencies = []
 
 [tool.setuptools]
-# This assumes your importable code lives in: myModule/python/my_maya_module
 package-dir = { "" = "python" }
 
 [tool.setuptools.packages.find]

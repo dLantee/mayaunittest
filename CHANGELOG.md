@@ -4,7 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [0.1.1] - 2026-02-05
+Add here any future unreleased changes.
+
+## [0.1.3] - 2026-02-03
+
+### Changed
+- Fixed version in pyproject.toml.
+
+
+## [0.1.2] - 2026-02-03
+
+### Added
+- Added more code examples to README. ([#11])
+- Added wallpaper picture to README.
+
+### Changed
+- CHANGELOG cleanup and formatting.
+
+
+## [0.1.1] - 2026-02-03
 
 ### Changed
 - Set default value if `--maya` flag not set.
@@ -15,9 +33,9 @@ All notable changes to this project will be documented in this file.
 ## [0.1.0] - 2026-02-01
 
 ### Added
-- maya_installs.json example file for custom Maya installation look up map. ([2])
-- Commandline option `--maya-path` to specify a custom Maya installation path. ([2])
-- Commandline option `--maya-installs` to specify a custom Maya installation look up map. ([2])
+- maya_installs.json example file for custom Maya installation look up map. ([#2])
+- Commandline option `--maya-path` to specify a custom Maya installation path. ([#2])
+- Commandline option `--maya-installs` to specify a custom Maya installation look up map. ([#2])
 
 ### Changed
 - README with new commandline options and examples.
@@ -41,7 +59,9 @@ All notable changes to this project will be documented in this file.
 ### Removed
 - Removed Settings from README as it requires further development.
 
- 
 
-[2]: https://github.com/dLantee/mayaunittest/issues/2
-[4]: https://github.com/dLantee/mayaunittest/issues/4
+
+
+[#2]: https://github.com/dLantee/mayaunittest/issues/2
+[#4]: https://github.com/dLantee/mayaunittest/issues/4
+[#11]: https://github.com/dLantee/mayaunittest/issues/11

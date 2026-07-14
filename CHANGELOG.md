@@ -4,7 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Add here any future unreleased changes.
+### Added
+- `mayaunittest` console-script entry point (installed via `pip install .`), replacing the
+  old `bin/run_maya_tests.py` script.
+- `--test` commandline option to run a single test module/class/method instead of
+  discovering a whole package's tests.
+- Pytest-based unit tests (`tests_cli/test_cli.py`) for the Maya-independent CLI helper
+  functions.
+
+### Changed
+- Restructured `bin/run_maya_tests.py` into `python/cli.py` as part of the installable
+  package, and renamed `maya_installs.json` to `custom_installs.json` (now at the repo root).
+- `--maya_installs` now defaults to the repo-root `custom_installs.json`.
+- `MAYA_LOCATION` is now restored to its previous value after a run instead of being left
+  permanently overwritten in the process environment.
+- Updated README to match the actual CLI flags and removed references to the old
+  `bin/run_maya_tests.py` script.
+
+### Fixed
+- Fixed `mayaunittest.py` crashing on import and a duplicate/broken `run_tests()`
+  definition, both introduced during the `bin/` -> `python/` refactor.
+- Fixed `pyproject.toml` packaging so `cli.py`/`mayaunittest.py` are actually included in
+  the installed package (`py-modules`).
+- Fixed a broken assertion in `tests/test_sample.py`.
 
 ## [0.1.3] - 2026-02-03
 

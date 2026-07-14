@@ -14,8 +14,12 @@ requires-python = ">=3.7"
 
 dependencies = []
 
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+mayaunittest = "cli:main"
+
 [tool.setuptools]
 package-dir = { "" = "python" }
-
-[tool.setuptools.packages.find]
-where = ["python"]
+py-modules = ["cli", "mayaunittest"]

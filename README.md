@@ -10,20 +10,26 @@ in a readable format. It opens a new scene between each test to ensure test isol
 
 Source: https://www.chadvernon.com/blog/unit-testing-in-maya/
 
-### Howto
+### Howto (In Maya)
 1. Put mayaunittest module somewhere in your PYTHONPATH. (with command line not needed)
 2. Create a **"/tests"** directory in your Maya module/package.
 3. Write test cases by deriving from `mayaunittest.MayaTestCase`.
-4. Use `bin/run_maya_tests.py` to run tests from command line or
-   use `mayaunittest.run_tests()` to run tests from within Maya.
+4. Use the `mayaunittest` command line tool (see "Howto (In commandline)" below) to run
+   tests from command line or use `mayaunittest.run_tests()` to run tests from within Maya.
+
+### Howto (In commandline)
+1. Download or clone the mayaunittest repository.
+2. Activate your Python environment and navigate to the mayaunittest directory.
+3. `py -m pip install .`  # Installs mayaunittest into your Python environment.
+4. Run tests using `mayaunittest --packages path/to/your/package`
 
 
 ### Requirements
 
   - Tests must be written using the `mayaunittest` module.
   - Tests must be located in a **"/tests"** directory within a module/package.
-  - Test methods must be named with a **"test_"** prefix.
-  - Test case classes must be named with a **"Tests"** suffix.
+  - Test methods must be named with a `test_*` prefix.
+  - Test case classes must be named with a `*Tests` suffix.
   - **MAYA_LOCATION** environment variable must be set to the Maya installation path.
 
 ### The main classes
@@ -38,8 +44,8 @@ Source: https://www.chadvernon.com/blog/unit-testing-in-maya/
 
 ### Example commandline usage
 
-Running test from command line makes development more convinient since you don't have to
-constantly restart Maya manually. When you run `run_maya_tests.py` it spwans
+Running tests from command line makes development more convenient since you don't have to
+constantly restart Maya manually. When you run `mayaunittest` it spawns
 a standalone Maya session in the background, runs the tests, and then closes Maya when done.
 
 Flags:
@@ -48,20 +54,20 @@ Flags:
 - --pause : Pause the Maya session after tests complete for inspection.
 - --clean-maya-app-dir : Generates a temporary clean maya app dir.
 - --maya-path: Specify a custom Maya installation path.
-- --maya-config: Specify a custom Maya installation look up map.
-- --maya-installs: Specify a JSON file containing Maya installation paths. (Good for custom setups)
+- --maya_installs: Specify a JSON file containing Maya installation paths. (Good for custom setups)
+- --test : Run a single test module, class, or method (e.g. `test_sample.SampleTests.test_create_sphere`) instead of discovering all tests in --packages.
 
 ```commandline
-cd path\to\mayaunittest
-py "bin\run_maya_tests.py" --maya 2026 --packages D:\projects\pkgA D:\projects\pkgB --pause
-py "bin\run_maya_tests.py" --packages D:\projects\pkgA --clean-maya-app-dir
-py "bin\run_maya_tests.py" --maya-path "C:\Program Files\Autodesk\Maya2024" --packages D:\projects\pkgA
-py "bin\run_maya_tests.py" --maya-installs "path\to\custom_maya_installs.json" --packages D:\projects\pkgA
+mayaunittest --maya 2026 --packages D:\projects\pkgA D:\projects\pkgB --pause
+mayaunittest --packages D:\projects\pkgA --clean-maya-app-dir
+mayaunittest --maya-path "C:\Program Files\Autodesk\Maya2024" --packages D:\projects\pkgA
+mayaunittest --maya_installs "path\to\custom_installs.json" --packages D:\projects\pkgA
+mayaunittest --packages D:\projects\pkgA --test test_sample.SampleTests.test_create_sphere
 ```
 
 ### Priority of Maya executable resolution
 1. --maya-path argument
-2. --maya-installs argument
+2. --maya_installs argument
 3. MAYA_LOCATION environment variable
 4. Default installation paths based on --maya argument
 

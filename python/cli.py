@@ -11,8 +11,8 @@ Layout assumption per package root:
         tests/clean_maya_app_dir/ (optional template for clean prefs)
 
 Examples:
-    py run_maya_tests.py --maya 2022 --packages D:\projects\pkgA D:\projects\pkgB --pause
-    py run_maya_tests.py --maya 2026 --packages D:\projects\pkgA --clean-maya-app-dir
+    py cli.py --maya 2022 --packages D:/projects/pkgA D:/projects/pkgB --pause
+    py cli.py --maya 2026 --packages D:/projects/pkgA --clean-maya-app-dir
 """
 
 import argparse
@@ -29,7 +29,8 @@ import time
 import json
 
 
-DEFAULT_MAYA_VERSION = 2022
+DEFAULT_MAYA_VERSION = 2026
+DEFAULT_MAYA_LOCATION = f"C:/Program Files/Autodesk/Maya{DEFAULT_MAYA_VERSION}"  # Windows fallback if no JSON and no env
 
 
 # ----------------------------
@@ -51,6 +52,12 @@ def _join_paths(paths):
 
 def _script_dir():
     return os.path.dirname(os.path.abspath(__file__))
+
+
+def _default_maya_installs_path():
+    # custom_installs.json lives at the repo root, one level up from python/cli.py.
+    # Only resolves when running from a source checkout (not after pip install).
+    return os.path.join(os.path.dirname(_script_dir()), "custom_installs.json")
 
 
 # ----------------------------
@@ -290,8 +297,8 @@ def build_arg_parser():
 
     p.add_argument(
         "--maya_installs",
-        default=os.path.join(_script_dir(), "maya_installs.json"),
-        help="Path to maya_installs.json (defaults next to this script).",
+        default=_default_maya_installs_path(),
+        help="Path to custom_installs.json (defaults to custom_installs.json at the repo root).",
     )
 
     p.add_argument(
@@ -299,6 +306,14 @@ def build_arg_parser():
         nargs="+",
         required=True,
         help="One or more package root directories (each must contain tests/).",
+    )
+
+    p.add_argument(
+        "--test",
+        default=None,
+        help="Run a single test module, class, or method (e.g. "
+             "test_sample.SampleTests.test_create_sphere) instead of discovering "
+             "all tests in --packages.",
     )
 
     p.add_argument(
@@ -325,46 +340,60 @@ def main():
     # Resolve Maya install location with desired priority
     maya_location = resolve_maya_location(args.maya, args.maya_path, args.maya_installs)
 
-    # IMPORTANT: CLI selection wins -> force MAYA_LOCATION for this run
-    # TODO: Does it resets it after run?
+    # CLI selection wins -> force MAYA_LOCATION for this run. Restored in the outer `finally`
+    # below: this process always exits right after main() returns (see `if __name__ ==
+    # "__main__"` at the bottom), so the overwrite only matters if something else calls
+    # main() again in the same process (e.g. tests) -- restoring avoids leaking it across
+    # calls. The spawned mayapy subprocess gets its own env copy either way (see
+    # spawn_mayapy_and_rerun's `env=os.environ.copy()`), so it always sees this value
+    # regardless of whether we restore it here afterward.
+    previous_maya_location = os.environ.get("MAYA_LOCATION")
     os.environ["MAYA_LOCATION"] = maya_location
 
-    mayapy_exe = mayapy_exe_from_location(maya_location)
-
-    # If not in mayapy, spawn it and rerun.
-    if (not is_running_in_mayapy()) and (not getattr(args, "_in_mayapy", False)):
-        return spawn_mayapy_and_rerun(mayapy_exe)
-    
-    # We are inside mayapy here
-    maya_app_dir = get_clean_maya_app_dir() if args.clean_maya_app_dir else None
-
-    configure_env_for_packages(packages, maya_app_dir)
-
     try:
-        names = ", ".join([p["name"] for p in packages])
-        print("=" * 30, "Maya Unit Test Runner", "=" * 30)
-        print("MAYA_LOCATION:", os.environ.get("MAYA_LOCATION"))
-        print("sys.executable:", sys.executable)
-        print("MAYA_APP_DIR:", os.environ.get("MAYA_APP_DIR"))
-        print("\nStarting unittest for packages: {0}".format(names))
+        mayapy_exe = mayapy_exe_from_location(maya_location)
 
-        # Import after MAYA_LOCATION is set (your mayaunittest needs it at import time)
-        import mayaunittest  # type: ignore
+        # If not in mayapy, spawn it and rerun.
+        if (not is_running_in_mayapy()) and (not getattr(args, "_in_mayapy", False)):
+            return spawn_mayapy_and_rerun(mayapy_exe)
 
-        test_dirs = [p["tests_dir"] for p in packages]
-        mayaunittest.run_tests_from_commandline(directories=test_dirs)
+        # We are inside mayapy here
+        maya_app_dir = get_clean_maya_app_dir() if args.clean_maya_app_dir else None
 
-        return 0
+        configure_env_for_packages(packages, maya_app_dir)
+
+        try:
+            names = ", ".join([p["name"] for p in packages])
+            print("=" * 30, "Maya Unit Test Runner", "=" * 30)
+            print("MAYA_LOCATION:", os.environ.get("MAYA_LOCATION"))
+            print("sys.executable:", sys.executable)
+            print("MAYA_APP_DIR:", os.environ.get("MAYA_APP_DIR"))
+            print("\nStarting unittest for packages: {0}".format(names))
+            if args.test:
+                print("Running single test: {0}".format(args.test))
+
+            # Import after MAYA_LOCATION is set (your mayaunittest needs it at import time)
+            import mayaunittest  # type: ignore
+
+            test_dirs = [p["tests_dir"] for p in packages]
+            mayaunittest.run_tests_from_commandline(directories=test_dirs, test=args.test)
+
+            return 0
+        finally:
+            if args.clean_maya_app_dir:
+                if maya_app_dir is not None and os.path.exists(maya_app_dir):
+                    try:
+                        _rmtree_with_retries(maya_app_dir)
+                    except Exception as e:
+                        print("Warning: could not remove temp MAYA_APP_DIR: {0}".format(e))
+
+            if args.pause:
+                input("Press [Enter] to continue...")
     finally:
-        if args.clean_maya_app_dir:
-            if maya_app_dir is not None and os.path.exists(maya_app_dir):
-                try:
-                    _rmtree_with_retries(maya_app_dir)
-                except Exception as e:
-                    print("Warning: could not remove temp MAYA_APP_DIR: {0}".format(e))
-
-        if args.pause:
-            input("Press [Enter] to continue...")
+        if previous_maya_location is None:
+            os.environ.pop("MAYA_LOCATION", None)
+        else:
+            os.environ["MAYA_LOCATION"] = previous_maya_location
 
 
 if __name__ == "__main__":

@@ -200,6 +200,10 @@ class MayaTestCase(unittest.TestCase):
 
     @classmethod
     def load_plugin(cls, plugin):
+        """
+        Args:
+            plugin (str): The name of the plugin or file path to load.
+        """
         cmds.loadPlugin(plugin, qt=True)
         cls.plugins_loaded.add(plugin)
 
